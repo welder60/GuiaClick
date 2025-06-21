@@ -14,13 +14,24 @@ document.getElementById("toggle").addEventListener("click", () => {
 document.getElementById("finalizar").addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
     chrome.tabs.sendMessage(tab.id, "finalizar", (dados) => {
-      const blob = new Blob([JSON.stringify(dados, null, 2)], {
-        type: "application/json",
+      let html =
+        "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Interacoes</title></head><body>";
+      dados.forEach((item) => {
+        html += "<div style='margin-bottom:20px;'>";
+        if (item.screenshot) {
+          html += `<img src="${item.screenshot}" style="max-width:100%;"><br>`;
+        }
+        const desc = Object.assign({}, item);
+        delete desc.screenshot;
+        html += "<pre>" + JSON.stringify(desc, null, 2) + "</pre></div>";
       });
+      html += "</body></html>";
+
+      const blob = new Blob([html], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "interacoes.json";
+      a.download = "interacoes.html";
       a.click();
       URL.revokeObjectURL(url);
       estadoCaptura = false;

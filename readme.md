@@ -7,7 +7,7 @@ GuiaClick é uma extensão para o Google Chrome que registra interações do usu
 - Registra cliques e teclas.
 - Captura screenshots da aba ativa.
 - Permite iniciar e pausar a captura.
-- Finaliza a sessão e salva um arquivo com os dados coletados.
+- Finaliza a sessão e salva um arquivo HTML com as capturas e descrições.
 - Exibe os dados registrados em um painel popup.
 - Gera uma base para criação de tutoriais.
 
@@ -25,7 +25,7 @@ GuiaClick é uma extensão para o Google Chrome que registra interações do usu
 2. Clique no ícone da extensão.
 3. Use os botões:
    - **Iniciar/Pausar Captura**: alterna o registro de interações.
-   - **Finalizar e Salvar**: encerra a sessão e baixa um arquivo JSON com os dados.
+   - **Finalizar e Salvar**: encerra a sessão e baixa um arquivo HTML com as interações.
    - **Ver Interações**: lista os cliques e teclas capturados.
    - **Capturar Tela**: tira um print da aba atual e exibe no popup.
 
@@ -39,7 +39,7 @@ GuiaClick é uma extensão para o Google Chrome que registra interações do usu
 
 ## Observações
 
-- A captura de tela mostra a aba inteira visível, não apenas o elemento clicado.
+- A captura de tela recorta a região do elemento clicado quando possível.
 - Os dados são mantidos apenas em memória enquanto a página estiver aberta.
 
 ## Licença

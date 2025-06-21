@@ -1,18 +1,76 @@
 let interacoes = [];
 let capturando = false;
 
+// Coleta informações básicas do elemento clicado
+function dadosElemento(el) {
+  const rect = el.getBoundingClientRect();
+  return {
+    tag: el.tagName,
+    texto: el.innerText,
+    id: el.id || null,
+    classes: el.className || null,
+    href: el.href || null,
+    bounding: {
+      x: rect.x,
+      y: rect.y,
+      width: rect.width,
+      height: rect.height,
+    },
+  };
+}
+
+// Captura screenshot da aba e recorta a região do elemento
+function capturarRegiao(el, cb) {
+  const rect = el.getBoundingClientRect();
+  chrome.runtime.sendMessage("capturar", (res) => {
+    if (!res || !res.imagem) {
+      cb(null);
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      const ratio = window.devicePixelRatio || 1;
+      const canvas = document.createElement("canvas");
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(
+        img,
+        rect.x * ratio,
+        rect.y * ratio,
+        rect.width * ratio,
+        rect.height * ratio,
+        0,
+        0,
+        rect.width * ratio,
+        rect.height * ratio
+      );
+      cb(canvas.toDataURL("image/png"));
+    };
+    img.src = res.imagem;
+  });
+}
+
 function registrar(info) {
   if (!capturando) return;
   interacoes.push(info);
   console.log("Interação registrada:", info);
 }
 
+// Registra cliques e captura a região clicada
 document.addEventListener("click", (e) => {
-  registrar({
-    tipo: "clique",
-    tag: e.target.tagName,
-    texto: e.target.innerText,
-    quando: new Date().toISOString(),
+  if (!capturando) return;
+  const info = Object.assign(
+    {
+      tipo: "clique",
+      quando: new Date().toISOString(),
+    },
+    dadosElemento(e.target)
+  );
+
+  capturarRegiao(e.target, (img) => {
+    if (img) info.screenshot = img;
+    registrar(info);
   });
 });
 
@@ -28,22 +86,23 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener(
   "blur",
   (e) => {
-    if ((e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") && capturando) {
-      registrar({
-        tipo: "input",
-        valor: e.target.value,
-        quando: new Date().toISOString(),
-      });
+    if (
+      (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") &&
+      capturando
+    ) {
+      const info = Object.assign(
+        {
+          tipo: "input",
+          valor: e.target.value,
+          quando: new Date().toISOString(),
+        },
+        dadosElemento(e.target)
+      );
 
-      chrome.runtime.sendMessage("capturar", (res) => {
-        if (res && res.imagem) {
-          registrar({
-            tipo: "screenshot",
-            imagem: res.imagem,
-            quando: new Date().toISOString(),
-          });
-          console.log("Screenshot capturada.");
-        }
+      capturarRegiao(e.target, (img) => {
+        if (img) info.screenshot = img;
+        registrar(info);
+        console.log("Screenshot capturada.");
       });
     }
   },
