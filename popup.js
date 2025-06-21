@@ -36,6 +36,8 @@ document.getElementById("finalizar").addEventListener("click", () => {
       URL.revokeObjectURL(url);
       estadoCaptura = false;
       document.getElementById("toggle").textContent = "Iniciar Captura";
+      // limpa resultados do popup para nova sessao
+      document.getElementById("resultado").innerHTML = "";
     });
   });
 });
