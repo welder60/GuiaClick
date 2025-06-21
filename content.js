@@ -19,9 +19,20 @@ function dadosElemento(el) {
   };
 }
 
+// Retorna o div pai mais próximo, caso exista
+function divPaiMaisProximo(el) {
+  while (el && el !== document.body) {
+    if (el.tagName === "DIV") return el;
+    el = el.parentElement;
+  }
+  return null;
+}
+
 // Captura screenshot da aba e recorta a região do elemento
+// ou do div pai mais próximo, se existir
 function capturarRegiao(el, cb) {
-  const rect = el.getBoundingClientRect();
+  const alvo = divPaiMaisProximo(el) || el;
+  const rect = alvo.getBoundingClientRect();
   chrome.runtime.sendMessage("capturar", (res) => {
     if (!res || !res.imagem) {
       cb(null);
