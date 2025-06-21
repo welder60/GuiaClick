@@ -56,7 +56,9 @@ function capturarRegiao(el, cb) {
         rect.width * ratio,
         rect.height * ratio
       );
-      cb(canvas.toDataURL("image/png"));
+      const data = canvas.toDataURL("image/png");
+      console.log("Screenshot capturada:", data);
+      cb(data);
     };
     img.src = res.imagem;
   });
@@ -85,13 +87,6 @@ document.addEventListener("click", (e) => {
   });
 });
 
-document.addEventListener("keydown", (e) => {
-  registrar({
-    tipo: "tecla",
-    tecla: e.key,
-    quando: new Date().toISOString(),
-  });
-});
 
 // Registra o valor informado em inputs e tira screenshot ao perder o foco
 document.addEventListener(
@@ -113,7 +108,6 @@ document.addEventListener(
       capturarRegiao(e.target, (img) => {
         if (img) info.screenshot = img;
         registrar(info);
-        console.log("Screenshot capturada.");
       });
     }
   },
