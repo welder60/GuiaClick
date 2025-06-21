@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Gravador de Interações",
   "version": "1.0",
-  "permissions": ["scripting", "tabs", "activeTab"],
+  "permissions": ["scripting", "tabs", "activeTab", "downloads"],
   "action": {
     "default_popup": "popup.html"
   },

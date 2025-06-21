@@ -29,11 +29,10 @@ document.getElementById("finalizar").addEventListener("click", () => {
 
       const blob = new Blob([html], { type: "text/html" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "interacoes.html";
-      a.click();
-      URL.revokeObjectURL(url);
+      chrome.downloads.download(
+        { url, filename: "interacoes.html" },
+        () => URL.revokeObjectURL(url)
+      );
       estadoCaptura = false;
       document.getElementById("toggle").textContent = "Iniciar Captura";
       // limpa resultados do popup para nova sessao
